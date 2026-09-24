@@ -1,1 +1,11 @@
-{"name":"azzy-outlast-tracker","pages_build_output_dir":"./public","compatibility_date":"2026-09-24"}
+{
+  "name": "azzy-outlast-tracker",
+  "pages_build_output_dir": "./public",
+  "compatibility_date": "2026-09-24",
+  "kv_namespaces": [
+    {
+      "binding": "TRACKER_KV",
+      "id": "26fe01acf82e4c5abf27721bf0884e88"
+    }
+  ]
+}
