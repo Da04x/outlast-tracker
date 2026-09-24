@@ -1,0 +1,1 @@
+export async function onRequestGet({env}){const raw=env.TRACKER_KV?await env.TRACKER_KV.get('state'):null;const s=raw?JSON.parse(raw):{count:183,mode:'MANUAL'};return Response.json({count:Number(s.count)||0,mode:s.mode||'MANUAL'},{headers:{'Cache-Control':'no-store'}})}
