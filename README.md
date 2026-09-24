@@ -1,14 +1,39 @@
-# Azzy Outlast Tracker
-Fresh build using the uploaded Azzy image. Start count 183, target 400.
+# Azzy Outlast Tracker — Netlify + Twitch
 
-## Cloudflare
-Deploy as a Cloudflare Pages project. The Wrangler file binds the KV namespace as `TRACKER_KV`. Add these encrypted secrets in Settings → Variables and Secrets: `ADMIN_KEY`, `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET`, and `TWITCH_EVENTSUB_SECRET`. Add `TWITCH_BROADCASTER_LOGIN` as a variable/secret with the channel login (for example `5starazzy`). Redeploy after changing configuration.
+Outlast-style Twitch subscription challenge tracker.
 
-## Twitch connection
-1. In the Twitch Developer Console, set the OAuth redirect URL to exactly `https://YOUR-SITE.pages.dev/api/twitch/callback` (use your real Cloudflare Pages hostname).
-2. Keep the app confidential.
-3. In `/admin.html`, enter the admin key and press **GENERATE TWITCH AUTH LINK**.
-4. Send the one-time link to the broadcaster. They authorize `channel:read:subscriptions`.
-5. The callback verifies the authorized Twitch login, stores the token in KV, and registers `channel.subscribe` and `channel.subscription.gift` EventSub webhooks.
+## Netlify
 
-The visual public website does not change. The first Twitch connection sets the challenge state to 183. New normal subs add 1; gifted-sub events add the event's `total`. Event IDs are de-duplicated for 24 hours.
+- Publish directory: `public`
+- Functions directory: `netlify/functions`
+- Pushes to `main` redeploy automatically.
+- Persistent state uses Netlify Blobs.
+
+## Environment variables
+
+Set these in Netlify Project configuration → Environment variables. They must be available to Functions:
+
+- `ADMIN_KEY` — private key used by `/admin.html`
+- `TWITCH_CLIENT_ID` — Twitch application client ID
+- `TWITCH_CLIENT_SECRET` — Twitch application client secret
+- `TWITCH_EVENTSUB_SECRET` — a long random secret you create and keep private
+- `TWITCH_BROADCASTER_LOGIN` — the Twitch login of the channel owner, e.g. `5starazzy` (recommended)
+
+After changing environment variables, trigger a new deploy because Netlify applies function environment values at deploy time.
+
+## Twitch redirect URL
+
+Set the Twitch application's OAuth redirect URL to:
+
+`https://YOUR-NETLIFY-SITE/api/twitch/callback`
+
+## Connecting Twitch
+
+1. Open `/admin.html`.
+2. Enter `ADMIN_KEY`.
+3. Tap **GENERATE TWITCH AUTH LINK**.
+4. Send the generated link to the broadcaster.
+5. The broadcaster authorizes `channel:read:subscriptions`.
+6. Twitch EventSub is registered for `channel.subscribe` and `channel.subscription.gift`.
+
+The public page does not expose the admin key or Twitch credentials.
